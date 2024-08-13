@@ -3,7 +3,7 @@ import CustomTextInput from "@/components/CustomTextInput";
 import Divider from "@/components/Divider";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Image,
   ScrollView,
@@ -14,11 +14,45 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AntDesign from "@expo/vector-icons/AntDesign";
+// App.js
+
+import { Amplify } from "aws-amplify";
+import amplifyconfig from "../src/amplifyconfiguration.json";
+import {
+  handleSignIn,
+  handleSignUp,
+  handleSignUpConfirmation,
+} from "@/awsUtils";
+Amplify.configure(amplifyconfig);
 
 const Index = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+
+  const handleRegister = useCallback(() => {
+    // router.push("(tabs)");
+    handleSignUp({
+      username: "h123h@yopmail.com",
+      password: "123456789",
+      email: "h123h@yopmail.com",
+    });
+  }, []);
+
+  const verifyOTP = useCallback(() => {
+    handleSignUpConfirmation({
+      username: "h123h@yopmail.com",
+      confirmationCode: "800452",
+    });
+  }, []);
+
+  const handleLogin = useCallback(() => {
+    handleSignIn({
+      username: "h123h@yopmail.com",
+      password: "123456789",
+    });
+  }, []);
+
   return (
     <>
       <StatusBar style="light" animated backgroundColor="white" />
@@ -56,10 +90,10 @@ const Index = () => {
               </TouchableOpacity>
             </View>
             <View>
-              <CustomButton
-                title="Log in"
-                onPress={() => router.push("(tabs)")}
-              />
+              <CustomButton title="Register" onPress={() => handleRegister()} />
+              <CustomButton title="Verify OTP" onPress={() => verifyOTP()} />
+              <CustomButton title="Login" onPress={() => handleLogin()} />
+              <CustomButton title="SignOut" onPress={() => handleLogin()} />
             </View>
           </View>
 
