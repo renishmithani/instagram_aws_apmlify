@@ -1,4 +1,9 @@
-import { signUp, signOut } from "aws-amplify/auth";
+import {
+  signUp,
+  signOut,
+  getCurrentUser,
+  fetchUserAttributes,
+} from "aws-amplify/auth";
 import { confirmSignUp, type ConfirmSignUpInput } from "aws-amplify/auth";
 import { signIn, type SignInInput } from "aws-amplify/auth";
 
@@ -24,15 +29,16 @@ export async function handleSignUp({
           email,
           //   phone_number, // E.164 number convention
         },
-        // optional
-        autoSignIn: false, // or SignInOptions e.g { authFlowType: "USER_SRP_AUTH" }
+        autoSignIn: false,
       },
     });
 
-    console.log(userId);
     console.log(isSignUpComplete);
+    console.log(userId);
+    return { isSignUpComplete, userId, nextStep };
   } catch (error) {
     console.log("error signing up:", error);
+    return error;
   }
 }
 
@@ -53,16 +59,47 @@ export async function handleSignUpConfirmation({
 
 export async function handleSignIn({ username, password }: SignInInput) {
   try {
-    const { isSignedIn, nextStep } = await signIn({ username, password });
+    const { isSignedIn, nextStep } = await signIn({
+      username,
+      password,
+      options: {
+        authFlowType: "USER_PASSWORD_AUTH",
+      },
+    });
+    console.log(isSignedIn, nextStep);
+    return { isSignedIn, nextStep };
   } catch (error) {
     console.log("error signing in", error);
+    return error;
   }
 }
 
 export async function handleSignOut() {
   try {
-    await signOut();
+    const result = await signOut();
+    console.log("RESULT", result);
   } catch (error) {
     console.log("error signing out: ", error);
+  }
+}
+
+export async function currentAuthenticatedUser() {
+  try {
+    const { username, userId, signInDetails } = await getCurrentUser();
+    console.log(`The username: ${username}`);
+    console.log(`The userId: ${userId}`);
+    console.log(`The signInDetails: ${signInDetails}`);
+    return { username, userId, signInDetails };
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function handleFetchUserAttributes() {
+  try {
+    const userAttributes = await fetchUserAttributes();
+    console.log(userAttributes);
+  } catch (error) {
+    console.log(error);
   }
 }

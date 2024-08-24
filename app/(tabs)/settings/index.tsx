@@ -1,14 +1,31 @@
+import { handleSignOut } from "@/awsUtils";
+import CustomButton from "@/components/CustomButton";
+import CustomHeader from "@/components/CustomHeader";
+import Authenticated from "@/hoc/Authenticated";
+import { useRouter } from "expo-router";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 
 const Index = () => {
+  const route = useRouter();
+  const handleLogout = async () => {
+    try {
+      const result = await handleSignOut();
+      route.push("index");
+      console.log("RESULT", result);
+    } catch (error) {
+    } finally {
+    }
+  };
+
   return (
-    <View>
-      <Text>Settings/index.tsx</Text>
-    </View>
+    <>
+      <CustomHeader />
+      <View className="flex-1 bg-white justify-center">
+        <CustomButton title="Logout" onPress={handleLogout} />
+      </View>
+    </>
   );
 };
 
-const styles = StyleSheet.create({});
-
-export default Index;
+export default Authenticated(Index);

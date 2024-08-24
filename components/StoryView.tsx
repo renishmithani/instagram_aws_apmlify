@@ -15,16 +15,16 @@ interface StoryViewRenderItem {
 const StoryViewRenderItem = ({ item, index }: StoryViewRenderItem) => {
   const {} = item;
   const colors = [
-    ["#FF6B6B", "#F7C59F", "#F28C28"],
-    ["#0093E9", "#80D0C7", "#5E60CE"],
-    ["#006400", "#228B22", "#32CD32"],
-    ["#6A0572", "#A4508B", "#C06C84"],
-    ["#FF7E5F", "#FEB47B", "#FFD54F"],
-    ["#FF9966", "#FF5E62", "#FFC371"],
-    ["#1A2980", "#26D0CE", "#6DD5FA"],
+    // ["#FF6B6B", "#F7C59F", "#F28C28"],
+    // ["#0093E9", "#80D0C7", "#5E60CE"],
+    // ["#006400", "#228B22", "#32CD32"],
+    // ["#6A0572", "#A4508B", "#C06C84"],
+    // ["#FF7E5F", "#FEB47B", "#FFD54F"],
+    // ["#FF9966", "#FF5E62", "#FFC371"],
+    // ["#1A2980", "#26D0CE", "#6DD5FA"],
     ["#FF4E50", "#FC913A", "#FF6B6B"],
-    ["#A8E6CF", "#DCEDC1", "#FFD3B6"],
-    ["#403B4A", "#E8E8E8", "#3C3B3F"],
+    // ["#A8E6CF", "#DCEDC1", "#FFD3B6"],
+    // ["#403B4A", "#E8E8E8", "#3C3B3F"],
   ];
 
   function getRandomColorArray() {
@@ -40,18 +40,20 @@ const StoryViewRenderItem = ({ item, index }: StoryViewRenderItem) => {
           start={{ x: 0.0, y: 1.0 }}
           end={{ x: 1.0, y: 1.0 }}
           style={{
-            height: 68,
-            width: 68,
+            height: 69,
+            width: 69,
             alignItems: "center",
             justifyContent: "center",
             borderRadius: 82 / 2,
           }}
         >
-          <Image
-            source={{ uri: item?.picture?.medium }}
-            className="h-[60px] w-[60px] rounded-full"
-            resizeMode="contain"
-          />
+          <View className="border-2 h-[65px] w-[65px] rounded-full border-white bg-white">
+            <Image
+              source={{ uri: item?.picture?.medium }}
+              className="h-[60px] w-[60px] rounded-full"
+              resizeMode="contain"
+            />
+          </View>
         </LinearGradient>
       </View>
       <Text className="text-xs">{`${item?.name?.first}`}</Text>
@@ -62,7 +64,7 @@ const StoryViewRenderItem = ({ item, index }: StoryViewRenderItem) => {
 const StoryView = ({ data }: StoryView) => {
   return (
     <>
-      <View className="h-[90px] my-2">
+      <View className="h-[110px] bg-white border-b-2 border-gray-200">
         <FlatList
           horizontal
           data={data}
@@ -72,7 +74,6 @@ const StoryView = ({ data }: StoryView) => {
           }}
           showsHorizontalScrollIndicator={false}
         />
-        <Divider dividerStyle="opacity-20" />
       </View>
     </>
   );

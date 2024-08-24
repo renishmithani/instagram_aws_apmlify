@@ -1,57 +1,70 @@
-import CustomButton from "@/components/CustomButton";
-import CustomTextInput from "@/components/CustomTextInput";
-import Divider from "@/components/Divider";
-import { useRouter } from "expo-router";
-import { StatusBar } from "expo-status-bar";
-import React, { useCallback, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import AntDesign from "@expo/vector-icons/AntDesign";
-// App.js
-
 import { Amplify } from "aws-amplify";
+import { useRouter } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+
+import CustomButton from "@/components/CustomButton";
+import CustomTextInput from "@/components/CustomTextInput";
+import Divider from "@/components/Divider";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { currentAuthenticatedUser, handleSignIn } from "@/awsUtils";
+
 import amplifyconfig from "../src/amplifyconfiguration.json";
-import {
-  handleSignIn,
-  handleSignUp,
-  handleSignUpConfirmation,
-} from "@/awsUtils";
+
 Amplify.configure(amplifyconfig);
 
 const Index = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [isChecking, setIsChecking] = useState(true);
 
-  const handleRegister = useCallback(() => {
-    // router.push("(tabs)");
-    handleSignUp({
-      username: "h123h@yopmail.com",
-      password: "123456789",
-      email: "h123h@yopmail.com",
+  const checkUserLogin = async () => {
+    try {
+      setIsChecking(true);
+      const result = await currentAuthenticatedUser();
+      console.log("RESULT", result);
+      if (result?.userId) {
+        router.push({ pathname: "/(tabs)" });
+      }
+    } catch (error) {
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  const handleLogin = async () => {
+    const result = await handleSignIn({
+      username: email,
+      password: pass,
     });
+
+    if (result?.isSignedIn) {
+      router.push({ pathname: "/(tabs)" });
+    }
+    console.log("RESULT", result);
+  };
+
+  useEffect(() => {
+    checkUserLogin();
   }, []);
 
-  const verifyOTP = useCallback(() => {
-    handleSignUpConfirmation({
-      username: "h123h@yopmail.com",
-      confirmationCode: "800452",
-    });
-  }, []);
-
-  const handleLogin = useCallback(() => {
-    handleSignIn({
-      username: "h123h@yopmail.com",
-      password: "123456789",
-    });
-  }, []);
+  if (isChecking) {
+    return (
+      <View className="flex-1 align-center justify-center">
+        <ActivityIndicator />
+      </View>
+    );
+  }
 
   return (
     <>
@@ -90,10 +103,7 @@ const Index = () => {
               </TouchableOpacity>
             </View>
             <View>
-              <CustomButton title="Register" onPress={() => handleRegister()} />
-              <CustomButton title="Verify OTP" onPress={() => verifyOTP()} />
               <CustomButton title="Login" onPress={() => handleLogin()} />
-              <CustomButton title="SignOut" onPress={() => handleLogin()} />
             </View>
           </View>
 
