@@ -1,9 +1,11 @@
 import { Stack } from "expo-router/stack";
+import { UserSchema } from "../database/schema";
+import { RealmProvider } from "@realm/react";
 
 export default function Layout() {
   const userId = null;
 
-  const AuthStack = (
+  const AuthStack = () => (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="signUp" />
@@ -12,11 +14,17 @@ export default function Layout() {
     </Stack>
   );
 
-  const AuthenticatedStack = (
+  const AuthenticatedStack = () => (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(tabs)" />
     </Stack>
   );
 
-  return userId ? AuthStack : AuthenticatedStack;
+  return (
+    <>
+      <RealmProvider schema={[UserSchema]}>
+        {userId ? <AuthStack /> : <AuthenticatedStack />}
+      </RealmProvider>
+    </>
+  );
 }
