@@ -50,6 +50,18 @@ const Layout = () => {
               ),
           }}
         />
+
+        <Tabs.Screen
+          name="notifications"
+          options={{
+            tabBarIcon: ({ color, focused }) =>
+              focused ? (
+                <FontAwesome name="heart" size={26} color="black" />
+              ) : (
+                <Feather name="heart" size={26} color="black" />
+              ),
+          }}
+        />
         <Tabs.Screen
           name="settings"
           options={{
@@ -60,17 +72,6 @@ const Layout = () => {
                 color="black"
               />
             ),
-          }}
-        />
-        <Tabs.Screen
-          name="notifications"
-          options={{
-            tabBarIcon: ({ color, focused }) =>
-              focused ? (
-                <FontAwesome name="heart" size={26} color="black" />
-              ) : (
-                <Feather name="heart" size={26} color="black" />
-              ),
           }}
         />
       </Tabs>
