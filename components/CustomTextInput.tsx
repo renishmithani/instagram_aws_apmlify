@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { View, TextInput, Text } from "react-native";
+import { View, TextInput, Text, TextInputProps } from "react-native";
 
 type InputType = "none" | "password" | "email";
 
-interface CustomTextInputProps {
+interface CustomTextInputProps extends TextInputProps {
   value?: string;
   onChangeText?: (text: string) => void;
   containerStyle?: string;
@@ -13,15 +13,17 @@ interface CustomTextInputProps {
   inputType?: InputType;
 }
 
-const CustomTextInput: React.FC<CustomTextInputProps> = ({
-  value = "",
-  onChangeText = () => null,
-  containerStyle = "",
-  inputStyle = "",
-  placeholder = "",
-  error = "",
-  inputType = "none",
-}) => {
+const CustomTextInput: React.FC<CustomTextInputProps> = (Props) => {
+  const {
+    value = "",
+    onChangeText = () => null,
+    containerStyle = "",
+    inputStyle = "",
+    placeholder = "",
+    error = "",
+    inputType = "none",
+    ...rest
+  } = Props;
   const [showPass, setShowPass] = useState(false);
   return (
     <>
@@ -34,6 +36,9 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
           onChangeText={onChangeText}
           placeholder={placeholder}
           secureTextEntry={inputType === "password" && !showPass}
+          {...rest}
+          autoCorrect={false}
+          spellCheck={false}
         />
         {inputType === "password" && value ? (
           <Text
