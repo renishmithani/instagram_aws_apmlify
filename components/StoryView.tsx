@@ -1,7 +1,9 @@
 import React from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
 import Divider from "./Divider";
 import { LinearGradient } from "expo-linear-gradient";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 interface StoryView {
   data: any;
@@ -11,6 +13,25 @@ interface StoryViewRenderItem {
   item: any;
   index: number;
 }
+
+const AddStoryComponent = ({ onPress }) => {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      className="flex-col items-center justify-center ml-3"
+    >
+      <View className="rounded-full items-center justify-center border-2 border-gray-300">
+        <View className="border-2 h-[65px] w-[65px] rounded-full border-1 justify-center align-center items-center border-white bg-white">
+          <FontAwesome name="user" size={50} color="gray" />
+          <View className="absolute right-[-2] bottom-[-2]">
+            <FontAwesome5 name="plus" size={15} color="black" />
+          </View>
+        </View>
+      </View>
+      <Text className="text-xs">Add story</Text>
+    </TouchableOpacity>
+  );
+};
 
 const StoryViewRenderItem = ({ item, index }: StoryViewRenderItem) => {
   const {} = item;
@@ -70,7 +91,11 @@ const StoryView = ({ data }: StoryView) => {
           data={data}
           keyExtractor={({ item }) => item?.id?.value}
           renderItem={({ item, index }) => {
-            return <StoryViewRenderItem item={item} index={index} />;
+            return index == 0 ? (
+              <AddStoryComponent onPress={null} />
+            ) : (
+              <StoryViewRenderItem item={item} index={index} />
+            );
           }}
           showsHorizontalScrollIndicator={false}
         />
