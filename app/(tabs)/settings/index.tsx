@@ -1,6 +1,7 @@
 import { handleSignOut } from "@/awsUtils";
 import CustomButton from "@/components/CustomButton";
 import CustomHeader from "@/components/CustomHeader";
+import { event } from "@/event";
 import Authenticated from "@/hoc/Authenticated";
 import { useRouter } from "expo-router";
 import React from "react";
@@ -11,7 +12,7 @@ const Index = () => {
   const handleLogout = async () => {
     try {
       const result = await handleSignOut();
-      route.push("index");
+      event.emit("authCheck");
       console.log("RESULT", result);
     } catch (error) {
     } finally {
