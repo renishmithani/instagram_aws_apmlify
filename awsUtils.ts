@@ -3,6 +3,7 @@ import {
   signOut,
   getCurrentUser,
   fetchUserAttributes,
+  resendSignUpCode,
 } from "aws-amplify/auth";
 import { confirmSignUp, type ConfirmSignUpInput } from "aws-amplify/auth";
 import { signIn, type SignInInput } from "aws-amplify/auth";
@@ -105,6 +106,14 @@ async function handleFetchUserAttributes() {
     console.log(userAttributes);
   } catch (error) {
     console.log(error);
+    throw new Error(error);
+  }
+}
+export async function handleResendVerificationCode(userName: string) {
+  try {
+    const result = await resendSignUpCode({ username: userName });
+    return result;
+  } catch (error) {
     throw new Error(error);
   }
 }

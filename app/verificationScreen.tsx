@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Image, StyleSheet, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,17 +15,22 @@ import { Amplify } from "aws-amplify";
 
 import CustomButton from "@/components/CustomButton";
 import CustomTextInput from "@/components/CustomTextInput";
-import { handleSignUpConfirmation } from "@/awsUtils";
+import {
+  handleResendVerificationCode,
+  handleSignUpConfirmation,
+} from "@/awsUtils";
 
 import amplifyconfig from "../src/amplifyconfiguration.json";
+import OTPInput from "@/components/OTPInput";
 
 Amplify.configure(amplifyconfig);
 
 const VerificationScreen = () => {
   const router = useRouter();
-  const { userName } = useLocalSearchParams();
+  const { userName, email } = useLocalSearchParams();
 
   const [isLoading, setIsLoading] = useState(false);
+  const [codeResend, setCodeResend] = useState(false);
 
   const [verificationCode, setVerificationCode] = useState<string>("");
 
@@ -33,8 +46,22 @@ const VerificationScreen = () => {
       }
       console.log("RESULT", result);
     } catch (error) {
+      console.log("Page error", error.message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      setCodeResend(true);
+      const result = await handleResendVerificationCode(email as string);
+      console.log("RESULT", result);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", error.message || "Something went wrong...");
+    } finally {
+      setCodeResend(false);
     }
   };
 
@@ -52,21 +79,33 @@ const VerificationScreen = () => {
           </View>
           <View>
             <View className="mb-[20]">
-              <CustomTextInput
+              <OTPInput
+                length={6}
+                value={verificationCode}
+                onChange={(text) => setVerificationCode(text)}
+                // error={"dfbdz"}
+              />
+              {/* <CustomTextInput
                 value={verificationCode}
                 onChangeText={(text) => setVerificationCode(text)}
                 placeholder="Enter verification code"
                 containerStyle="mb-4"
-              />
+                keyboardType="numeric"
+              /> */}
             </View>
 
-            {/* <View className="justify-end items-center flex-row mb-4">
-              <TouchableOpacity onPress={() => router.push("forgotPass")}>
+            <View className="justify-center items-center flex-row mb-4">
+              <TouchableOpacity
+                className="mr-2"
+                disabled={codeResend}
+                onPress={() => handleResendCode()}
+              >
                 <Text className="ml-2 text-center text-[#3797EF] text-sm font-light">
-                  Forgot password?
+                  Resend verification code?
                 </Text>
               </TouchableOpacity>
-            </View> */}
+              {codeResend && <ActivityIndicator size="small" />}
+            </View>
             <View>
               {/* <CustomButton title="Register" onPress={() => handleRegister()} /> */}
               {/* <CustomButton title="Verify OTP" onPress={() => verifyOTP()} /> */}
