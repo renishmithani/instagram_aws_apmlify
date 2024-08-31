@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   StyleSheet,
   Text,
@@ -19,6 +20,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import { currentAuthenticatedUser, handleSignIn } from "@/awsUtils";
 
 import amplifyconfig from "../src/amplifyconfiguration.json";
+import { extractErrorMessage } from "@/constants/util";
 
 Amplify.configure(amplifyconfig);
 
@@ -44,6 +46,9 @@ const Index = () => {
   };
 
   const handleLogin = async () => {
+    if (!email || !pass) {
+      return;
+    }
     try {
       setIsLogin(true);
       const result = await handleSignIn({
@@ -64,7 +69,11 @@ const Index = () => {
         });
       }
     } catch (error) {
-      setIsLogin(false);
+      Alert.alert(
+        "Error",
+        extractErrorMessage(error?.message as string) ||
+          "Something went wrong..."
+      );
     } finally {
       setIsLogin(false);
     }

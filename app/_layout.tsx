@@ -5,7 +5,10 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, View, StyleSheet } from "react-native";
 
 const AuthStack = () => (
-  <Stack screenOptions={{ headerShown: false }}>
+  <Stack
+    // initialRouteName="verificationScreen"
+    screenOptions={{ headerShown: false }}
+  >
     <Stack.Screen name="index" />
     <Stack.Screen name="signUp" />
     <Stack.Screen name="verificationScreen" />
