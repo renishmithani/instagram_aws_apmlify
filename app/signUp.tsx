@@ -11,25 +11,33 @@ const SignUp = () => {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleRegister = async () => {
-    const result = await handleSignUp({
-      username: email,
-      email: email,
-      password: pass,
-    });
-    if (result?.userId) {
-      router.push({
-        pathname: "/verificationScreen",
-        params: {
-          ...result,
-          email,
-          userName: email,
-        },
+    try {
+      setIsLoading(true);
+      const result = await handleSignUp({
+        username: email,
+        email: email,
+        password: pass,
       });
-    }
+      if (result?.userId) {
+        router.push({
+          pathname: "/verificationScreen",
+          params: {
+            ...result,
+            email,
+            userName: email,
+          },
+        });
+      }
 
-    console.log("RESULT", result);
+      console.log("RESULT", result);
+    } catch (error) {
+      setIsLoading(false);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -62,6 +70,7 @@ const SignUp = () => {
             </View>
             <View>
               <CustomButton
+                loading={isLoading}
                 title="Create account"
                 onPress={() => handleRegister()}
               />

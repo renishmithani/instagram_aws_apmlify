@@ -52,6 +52,7 @@ export async function handleSignUpConfirmation({
       confirmationCode,
     });
     console.log(isSignUpComplete, nextStep);
+    return { isSignUpComplete, nextStep };
   } catch (error) {
     console.log("error confirming sign up", error);
     throw new Error(error);

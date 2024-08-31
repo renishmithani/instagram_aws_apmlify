@@ -16,16 +16,26 @@ Amplify.configure(amplifyconfig);
 const VerificationScreen = () => {
   const router = useRouter();
   const { userName } = useLocalSearchParams();
-  console.log(userName);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [verificationCode, setVerificationCode] = useState<string>("");
 
   const handleVerify = async () => {
-    const result = await handleSignUpConfirmation({
-      username: userName,
-      confirmationCode: verificationCode,
-    });
-    console.log("RESULT", result);
+    try {
+      setIsLoading(true);
+      const result = await handleSignUpConfirmation({
+        username: userName,
+        confirmationCode: verificationCode,
+      });
+      if (result?.isSignUpComplete) {
+        router.replace({ pathname: "/" });
+      }
+      console.log("RESULT", result);
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -60,7 +70,11 @@ const VerificationScreen = () => {
             <View>
               {/* <CustomButton title="Register" onPress={() => handleRegister()} /> */}
               {/* <CustomButton title="Verify OTP" onPress={() => verifyOTP()} /> */}
-              <CustomButton title="Verify OTP" onPress={() => handleVerify()} />
+              <CustomButton
+                title="Verify OTP"
+                loading={isLoading}
+                onPress={() => handleVerify()}
+              />
               {/* <CustomButton title="SignOut" onPress={() => handleLogin()} /> */}
             </View>
           </View>
