@@ -27,6 +27,7 @@ const Index = () => {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [isChecking, setIsChecking] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
 
   const checkUserLogin = async () => {
     try {
@@ -43,15 +44,30 @@ const Index = () => {
   };
 
   const handleLogin = async () => {
-    const result = await handleSignIn({
-      username: email,
-      password: pass,
-    });
+    try {
+      setIsLogin(true);
+      const result = await handleSignIn({
+        username: email,
+        password: pass,
+      });
+      console.log("RESULT", result);
 
-    if (result?.isSignedIn) {
-      router.push({ pathname: "/(tabs)" });
+      if (result?.isSignedIn) {
+        router.push({ pathname: "/(tabs)" });
+      } else if (result?.nextStep?.signInStep === "CONFIRM_SIGN_UP") {
+        router.push({
+          pathname: "/verificationScreen",
+          params: {
+            email,
+            userName: email,
+          },
+        });
+      }
+    } catch (error) {
+      setIsLogin(false);
+    } finally {
+      setIsLogin(false);
     }
-    console.log("RESULT", result);
   };
 
   useEffect(() => {
@@ -103,7 +119,11 @@ const Index = () => {
               </TouchableOpacity>
             </View>
             <View>
-              <CustomButton title="Login" onPress={() => handleLogin()} />
+              <CustomButton
+                loading={isLogin}
+                title="Login"
+                onPress={() => handleLogin()}
+              />
             </View>
           </View>
 
