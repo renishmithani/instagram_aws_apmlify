@@ -135,7 +135,7 @@ const Index = () => {
   }): Promise<void> => {
     setRefreshing(refresh);
     try {
-      await fetch("https://randomuser.me/api/?results=50")
+      await fetch("https://randomuser.me/api/?results=10")
         .then((res) => res.json())
         .then((data) => {
           setStoryData(data.results);
@@ -174,23 +174,26 @@ const Index = () => {
           </View>
         }
       />
-      <ScrollView
+      <FlatList
         className="bg-white"
+        data={[]}
+        renderItem={null}
+        ListFooterComponent={
+          <FlatList
+            data={postData || []}
+            renderItem={({ item, index }) => {
+              return <PostComponent item={item} index={index} />;
+            }}
+          />
+        }
+        ListHeaderComponent={<StoryView data={storyData || []} />}
         refreshControl={
           <RefreshControl
             onRefresh={() => generateUserData({ refresh: true })}
             refreshing={refreshing}
           />
         }
-      >
-        <StoryView data={storyData || []} />
-        <FlatList
-          data={postData || []}
-          renderItem={({ item, index }) => {
-            return <PostComponent item={item} index={index} />;
-          }}
-        />
-      </ScrollView>
+      />
     </View>
   );
 };
