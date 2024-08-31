@@ -27,11 +27,13 @@ const Index = () => {
     <>
       <CustomHeader />
       <View className="flex-1 bg-white justify-center">
-        <CustomButton
-          loading={isLoading}
-          title="Logout"
-          onPress={handleLogout}
-        />
+        <View className="w-[50%] self-center">
+          <CustomButton
+            loading={isLoading}
+            title="Logout"
+            onPress={handleLogout}
+          />
+        </View>
       </View>
     </>
   );
