@@ -38,7 +38,7 @@ export async function handleSignUp({
     return { isSignUpComplete, userId, nextStep };
   } catch (error) {
     console.log("error signing up:", error);
-    return error;
+    throw new Error(error);
   }
 }
 
@@ -54,6 +54,7 @@ export async function handleSignUpConfirmation({
     console.log(isSignUpComplete, nextStep);
   } catch (error) {
     console.log("error confirming sign up", error);
+    throw new Error(error);
   }
 }
 
@@ -70,16 +71,17 @@ export async function handleSignIn({ username, password }: SignInInput) {
     return { isSignedIn, nextStep };
   } catch (error) {
     console.log("error signing in", error);
-    return error;
+    throw new Error(error);
   }
 }
 
 export async function handleSignOut() {
   try {
-    const result = await signOut();
+    const result = await signOut({ global: true });
     console.log("RESULT", result);
   } catch (error) {
     console.log("error signing out: ", error);
+    throw new Error(error);
   }
 }
 
@@ -91,7 +93,8 @@ export async function currentAuthenticatedUser() {
     console.log(`The signInDetails: ${signInDetails}`);
     return { username, userId, signInDetails };
   } catch (err) {
-    console.log(err);
+    console.log("currentAuthenticatedUser", err);
+    throw new Error(err);
   }
 }
 
@@ -101,5 +104,6 @@ async function handleFetchUserAttributes() {
     console.log(userAttributes);
   } catch (error) {
     console.log(error);
+    throw new Error(error);
   }
 }
