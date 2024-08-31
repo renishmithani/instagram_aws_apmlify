@@ -11,6 +11,6 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
-    "database/schema.js"
+    "database/schema.tsx"
   ]
 }
