@@ -1,30 +1,65 @@
+import { currentAuthenticatedUser } from "@/awsUtils";
+import { event } from "@/event";
 import { Stack } from "expo-router/stack";
-import { UserSchema } from "../database/schema";
-import { RealmProvider } from "@realm/react";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, View, StyleSheet } from "react-native";
+
+const AuthStack = () => (
+  <Stack screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="index" />
+    <Stack.Screen name="signUp" />
+    <Stack.Screen name="verificationScreen" />
+    <Stack.Screen name="forgotPass" />
+  </Stack>
+);
+
+const AuthenticatedStack = () => (
+  <Stack screenOptions={{ headerShown: false }}>
+    <Stack.Screen name="(tabs)" />
+  </Stack>
+);
 
 export default function Layout() {
-  const userId = null;
+  const [loading, setLoading] = useState(false);
+  const [userId, setUserId] = useState<null | string>(null);
 
-  const AuthStack = () => (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Screen name="signUp" />
-      <Stack.Screen name="verificationScreen" />
-      <Stack.Screen name="forgotPass" />
-    </Stack>
-  );
+  const checkUserLogin = async () => {
+    try {
+      setLoading(true);
+      const result = await currentAuthenticatedUser();
+      setUserId(result?.userId || null);
+    } catch (error) {
+      setUserId(null);
+      console.log("checkUserLogin Error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  const AuthenticatedStack = () => (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(tabs)" />
-    </Stack>
-  );
+  useEffect(() => {
+    checkUserLogin();
+    event.on("authCheck", checkUserLogin);
+    return () => {
+      event.off("authCheck", checkUserLogin);
+    };
+  }, []);
 
-  return (
-    <>
-      <RealmProvider schema={[UserSchema]}>
-        {userId ? <AuthStack /> : <AuthenticatedStack />}
-      </RealmProvider>
-    </>
-  );
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="skyblue" />
+      </View>
+    );
+  }
+
+  return <>{userId ? <AuthenticatedStack /> : <AuthStack />}</>;
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+  },
+});
