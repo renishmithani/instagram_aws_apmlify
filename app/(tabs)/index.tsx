@@ -181,6 +181,7 @@ const Index = () => {
         ListFooterComponent={
           <FlatList
             data={postData || []}
+            keyExtractor={({ item, index }) => index}
             renderItem={({ item, index }) => {
               return <PostComponent item={item} index={index} />;
             }}
