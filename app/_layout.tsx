@@ -41,6 +41,7 @@ export default function Layout() {
 
   useEffect(() => {
     checkUserLogin();
+    // Event call
     event.on("authCheck", checkUserLogin);
     return () => {
       event.off("authCheck", checkUserLogin);
